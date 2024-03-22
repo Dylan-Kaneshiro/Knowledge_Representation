@@ -31,8 +31,8 @@ def resolve(clause_1, clause_2):
       return unique([i for i in clause_1 if not i==literal] + [i for i in clause_2 if not i==negate(literal)])
   return None
 
-def redundant(clause, kb):
-  return any([set(clause) == set(prev_clause) for prev_clause in kb])
+def redundant(clause, kb_set):
+  return tuple(sorted(set(clause))) in kb_set
 
 def create_kb(lines):
     kb = [unique(line.split(' ')) for line in lines[:-1]]
@@ -49,7 +49,7 @@ def print_kb(kb):
 def main(input_file):
     # Create initial knowledge base
     kb = create_kb(read_input(input_file))
-    kb_set = {set(clause) for clause in kb}
+    kb_set = {tuple(sorted(set(clause))) for clause in kb}
     print_kb(kb)
     '''
     kb is 2D list.
@@ -79,9 +79,10 @@ def main(input_file):
         # try to resolve current line with previous lines
         for i in range(cur):
             result = resolve(kb[cur], kb[i])
-            if result is not None and not always_true(result) and not redundant(result, kb):
+            if result is not None and not always_true(result) and not redundant(result, kb_set):
                 step+=1
                 kb.append(result)
+                kb_set.add(tuple(sorted(set(result))))
 
                 # Print out added clause
                 print(step,'. ', sep='', end='')
