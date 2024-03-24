@@ -99,6 +99,8 @@ def main(input_file):
 
     if valid:
        print('Valid')
+    else:
+       print('Fail')
 
 if __name__ == "__main__":
     input_file = sys.argv[1]
